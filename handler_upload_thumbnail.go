@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"io"
+	"os"
+	"strings"
 	"encoding/base64"
 
 	"github.com/bootdotdev/learn-file-storage-s3-golang-starter/internal/auth"
@@ -56,9 +58,21 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 		respondWithError(w, http.StatusUnauthorized, "IDs do not match", err)
 		return
 	}
-	baseString := base64.StdEncoding.EncodeToString(imageData)
-	dataURL := fmt.Sprintf("data:%s;base64,%s", mediaTypes, baseString)
-	videoMetadata.ThumbnailURL = &dataURL
+	parts := strings.Split(mediaTypes, "/")
+	fileExt := videoID.String() + "." + parts[1]
+	fullPath := filepath.Join(cfg.assetsRoot, fileExt) 
+	newFile, err := os.Create(fullPath)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "could not create file path", err)
+		return
+	}
+	_, err = io.Copy(newFile, file)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Could not copy file", err)
+		return
+	}
+	newURL := fmt.Sprintf("http://localhost:%s/assets/%s", cfg.port, fileExt)
+	videoMetadata.ThumbnailURL = &newURL
 	err = cfg.db.UpdateVideo(videoMetadata)
 
 	respondWithJSON(w, http.StatusOK, videoMetadata)
