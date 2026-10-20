@@ -257,11 +257,13 @@ function viewVideo(video) {
   document.getElementById('video-description-display').textContent = video.description;
 
   const thumbnailImg = document.getElementById('thumbnail-image');
+  const originalUrl = "ORIGINAL_URL";
+  const timeStamp = Date.now();
   if (!video.thumbnail_url) {
     thumbnailImg.style.display = 'none';
   } else {
     thumbnailImg.style.display = 'block';
-    thumbnailImg.src = video.thumbnail_url;
+    thumbnailImg.src = originalUrl + "?v=" + timeStamp;
   }
 
   const videoPlayer = document.getElementById('video-player');
