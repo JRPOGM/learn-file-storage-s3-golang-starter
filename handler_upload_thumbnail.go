@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"io"
 	"mime"
+	"crypto/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -62,7 +63,12 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	parts := strings.Split(mediaTypes, "/")
-	fileExt := videoID.String() + "." + parts[1]
+	someBytes := make([]byte, 32)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Could not read bytes", err)
+	}
+	fileExt := base64.RawURLEncoding.EncodeToString(someBytes)
 	fullPath := filepath.Join(cfg.assetsRoot, fileExt) 
 	newFile, err := os.Create(fullPath)
 	if err != nil {
