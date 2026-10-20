@@ -7,6 +7,7 @@ import (
 	"mime"
 	"crypto/rand"
 	"os"
+	"encoding/base64"
 	"path/filepath"
 	"strings"
 
@@ -64,11 +65,11 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 	}
 	parts := strings.Split(mediaTypes, "/")
 	someBytes := make([]byte, 32)
-	_, err := rand.Read(randomBytes)
+	_, err = rand.Read(someBytes)
 	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "Could not read bytes", err)
 	}
-	fileExt := base64.RawURLEncoding.EncodeToString(someBytes)
+	fileExt := base64.RawURLEncoding.EncodeToString(someBytes) + "." + parts[1]
 	fullPath := filepath.Join(cfg.assetsRoot, fileExt) 
 	newFile, err := os.Create(fullPath)
 	if err != nil {
