@@ -4,6 +4,7 @@ import (
 	"os"
 	"crypto/rand"
 	"fmt"
+	"strings"
 	"encoding/base64"
 )
 
@@ -23,4 +24,12 @@ func getAssetPath(mediaType string) string {
 	id := base64.RawURLEncoding.EncodeToString(base)
 	ext := mediaTypeToExt(mediaType)
 	return fmt.Sprintf("%s%s", id, ext)
+}
+
+func mediaTypeToExt(mediaType string) string {
+	parts := strings.Split(mediaType, "/")
+	if len(parts) != 2 {
+		return ".bin"
+	}
+	return "." + parts[1]
 }
