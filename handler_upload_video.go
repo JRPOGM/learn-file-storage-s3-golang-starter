@@ -52,7 +52,7 @@ func (cfg *apiConfig) handlerUploadVideo(w http.ResponseWriter, r *http.Request)
 	}
 	defer file.Close()
 
-	mediaType, _, err := mime.ParseMediaType(header.Header.Get("Content-Type"))
+	mediaType, _, err := mime.ParseMediaType(handler.Header.Get("Content-Type"))
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid Content-Type", err)
 		return
@@ -75,14 +75,14 @@ func (cfg *apiConfig) handlerUploadVideo(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	_, err := tempFile.Seek(0, io.SeekStart)
+	_, err = tempFile.Seek(0, io.SeekStart)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Could not reset file", err)
 		return
 	}
 
 	key := getAssetPath(mediaType)
-	_, err = cfg.s3Client.PutObject(r.Conext(), &s3.PutObjectInput{
+	_, err = cfg.s3Client.PutObject(r.Context(), &s3.PutObjectInput{
 		Bucket:			aws.String(cfg.s3Bucket),
 		Key:			aws.String(key),
 		Body:			tempFile,
