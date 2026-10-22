@@ -2,6 +2,9 @@ package main
 
 import (
 	"os"
+	"crypto/rand"
+	"fmt"
+	"encoding/base64"
 )
 
 func (cfg apiConfig) ensureAssetsDir() error {
@@ -9,4 +12,15 @@ func (cfg apiConfig) ensureAssetsDir() error {
 		return os.Mkdir(cfg.assetsRoot, 0755)
 	}
 	return nil
+}
+
+func getAssetPath(mediaType string) string {
+	base := make([]byte, 32)
+	_, err := rand.Read(base)
+	if err != nil {
+		panic("failed to generate random bytes")
+	}
+	id := base64.RawURLEncoding.EncodeToString(base)
+	ext := mediaTypeToExt(mediaType)
+	return fmt.Sprintf("%s%s", id, ext)
 }
