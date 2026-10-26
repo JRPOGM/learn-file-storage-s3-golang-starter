@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os/exec"
 	"path"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -98,7 +97,7 @@ func (cfg *apiConfig) handlerUploadVideo(w http.ResponseWriter, r *http.Request)
 	case "9:16":
 		directory = "portrait"
 	default:
-		directory = other
+		directory = "other"
 	}
 	key := getAssetPath(mediaType)
 	key = path.Join(directory, key)
