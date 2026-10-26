@@ -136,7 +136,7 @@ func getVideoAspectRatio(filePath string) (string, error) {
 		return "", fmt.Errorf("ffprobe error: %v", err)
 	}
 	var output struct {
-		Strams []struct {
+		Streams []struct {
 			Width	int	`json:"width"`
 			Height	int	`json:"height"`
 		} `json:"streams"`
