@@ -107,11 +107,6 @@ func (cfg *apiConfig) handlerVideoGet(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusUnauthorized, "user IDs do not match", err)
 		return
 	}
-	video, err = cfg.dbVideoToSignedVideo(video)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "could not assign the video correctly", err)
-		return
-	}
 	respondWithJSON(w, http.StatusOK, video)
 }
 
@@ -131,14 +126,6 @@ func (cfg *apiConfig) handlerVideosRetrieve(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't retrieve videos", err)
 		return
-	}
-	for i, video := range videos {
-		video, err = cfg.dbVideoToSignedVideo(video)
-		if err != nil {
-			respondWithError(w, http.StatusInternalServerError, "Could not assign the video correctly", err)
-			return
-		}
-		videos[i] = video
 	}
 	respondWithJSON(w, http.StatusOK, videos)
 }
